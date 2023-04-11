@@ -43,12 +43,12 @@ function loadPlanetsData() {
 
     });
 
-    function getAllPlanets() {
-        return habitablePlanets;
-    }
+
 
 }
-
+function getAllPlanets() {
+    return habitablePlanets;
+};
 
 
 
