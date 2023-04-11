@@ -43,7 +43,9 @@ function loadPlanetsData() {
 
     });
 
-
+    function getAllPlanets() {
+        return habitablePlanets;
+    }
 
 }
 
@@ -52,5 +54,5 @@ function loadPlanetsData() {
 
 module.exports = {
     loadPlanetsData,
-    planets: habitablePlanets,
+    getAllPlanets
 }
