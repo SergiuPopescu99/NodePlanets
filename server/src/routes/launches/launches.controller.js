@@ -7,14 +7,14 @@ function httpAddNewLaunch(req, res) {
     const launch = req.body;
 
     if (!launch.mission || !launch.rocket || !launch.launchDate
-        || !launch.destination) {
+        || !launch.target) {
         return res.status(400).json({
-            error: "Missing required lunch properties!",
+            error: "Missing required launch properties!",
         });
     }
 
     launch.launchDate = new Date(launch.launchDate);
-    //An implicit function will be called on launchDate which will transform it in Unix timestamp
+    //An implicit function will be called on launchDate (valueOf) which will transform it in Unix timestamp
     if (isNaN(launch.launchDate)) {
         return res.status(400).json({
             error: "Invalid launch date!",
