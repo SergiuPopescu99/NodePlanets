@@ -37,5 +37,5 @@ function abortLaunchById(id) {
     aborted.success = false;
     return aborted;
 }
-
+  
 module.exports = { launches, getAllLaunches, addNewLaunch, existsLaunchWithId, abortLaunchById };
