@@ -37,7 +37,7 @@ function loadPlanetsData() {
                 reject(err);
             })
             .on('end', async () => {
-                const countPlanetsFound = (await getAllPlanets).length;
+                const countPlanetsFound = (await getAllPlanets()).length;
                 console.log(`Length of the array is ${countPlanetsFound} habitable planets`)
 
                 // console.log(habitablePlanets.forEach((p) => { console.log(p['kepler_name']) }))
@@ -50,7 +50,9 @@ function loadPlanetsData() {
 
 }
 async function getAllPlanets() {
-    return await planets.find({});
+    return await planets.find({}, {
+        '__id': 0, '__v': 0
+    });
 };
 async function savePlanet(planet) {
     try {
