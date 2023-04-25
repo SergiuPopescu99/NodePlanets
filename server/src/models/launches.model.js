@@ -1,3 +1,5 @@
+const axios = require('axios');
+
 const launchesDatabase = require('./launches.mongo')
 const planets = require('./planets.mongo')
 const launches = new Map();
@@ -5,18 +7,63 @@ const launches = new Map();
 const DEFAULT_FLIGHT_NUMBER = 100;
 
 const launch = {
-    mission: "Kepler Exploration X",
-    rocket: 'Explorer IS1',
-    launchDate: new Date('December 27,2030'),
-    target: "Kepler-442 b",
-    flightNumber: 100,
-    customers: ['NASA', 'UPT'],
+    mission: "Kepler Exploration X",//"name"
+    rocket: 'Explorer IS1', //rocket.name
+    launchDate: new Date('December 27,2030'),//"date_local"
+    target: "Kepler-442 b", //not applicable
+    flightNumber: 100, //flight_number
+    customers: ['NASA', 'UPT'],//Getting from populating payloads(array)
     upcoming: true,
     success: true,
 
 };
 // launches.set(launch.flightNumber, launch);
 saveLaunch(launch);
+
+async function loadLaunchesData() {
+
+    const SPACEX_API_URL = 'https://api.spacexdata.com/v4/launches/query';
+
+    console.log('Downloading launch data');
+    const response = await axios.post(SPACEX_API_URL, {
+        query: {},
+        options: {
+            pagination: false,
+            populate: [{
+                path: 'rocket',
+                select: {
+                    name: 1
+                }
+            },
+            {
+                path: 'payloads',
+                select: {
+                    customers: 1
+                }
+            }
+            ]
+        }
+    });
+    const launchDocs = response.data.docs;
+    for (const launchDoc of launchDocs) {
+        const payloads = launchDoc['payloads'];
+        const customers = payloads.flatMap((payload) => { return payload['customers'] })
+        const launch = {
+            flightNumber: launchDoc['flight_number'],
+            mission: launchDoc['name'],
+            rocket: launchDoc['rocket']['name'],
+            launchDate: launchDoc['date_local'],
+            success: launchDoc['success'],
+            customers,
+
+        };
+        console.log(`${launch.flightNumber} ${launch.mission}`)
+    }
+}
+
+
+
+
 async function existsLaunchWithId(launchId) {
     return await launchesDatabase.findOne({ flightNumber: launchId });
 }
@@ -67,4 +114,4 @@ async function abortLaunchById(id) {
     return aborted.modifiedCount === 1;
 }
 
-module.exports = { launches, getAllLaunches, scheduleNewLaunch, existsLaunchWithId, abortLaunchById };
+module.exports = { launches, loadLaunchesData, getAllLaunches, scheduleNewLaunch, existsLaunchWithId, abortLaunchById };
