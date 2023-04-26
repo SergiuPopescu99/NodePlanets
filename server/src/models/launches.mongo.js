@@ -20,7 +20,7 @@ const launchesSchema = new monoose.Schema({
     },
     target: {
         type: String,
-        required: true,
+
 
     },
     customers: [String],
